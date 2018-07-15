@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using System.Linq;
 using System;
 using NUnit.Framework.Api;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 namespace Assets.Scripts.QuizGame
@@ -28,9 +29,9 @@ namespace Assets.Scripts.QuizGame
         private float timeRemaining;
         private int questionIndex;
         private int playerScore;
+        private Color selectedColor;
+        private Color defaultColor;
 
-
-        
         void Start()
         {
             // Finds the data controller to pull all the current round information such as time limit, amount of score, etc.
@@ -42,6 +43,9 @@ namespace Assets.Scripts.QuizGame
             questionPool = ql.GetQuestions();
             // Assigns the time from the data controller.
             timeRemaining = currentRoundData.timeLimitInSeconds;
+            
+            selectedColor = Color.green;
+            defaultColor = Color.black;
 
             // Here's where things start happening.  Resets the variables and calls the method to 
             // start showing questions.  Also flips the flag to make the round active and starts
@@ -51,6 +55,7 @@ namespace Assets.Scripts.QuizGame
             ShowQuestion();
             isRoundActive = true;
             UpDateTimeRemainingDisplay();
+
         }
 
         /// <summary>
@@ -92,10 +97,25 @@ namespace Assets.Scripts.QuizGame
         /// Checks the button clicked to see if it was a right or wrong choice.
         /// </summary>
         /// <param name="buttonTag">Passes the button tag</param>
-        public void AnswerButtonClicked(string buttonTag)
+        public void AnswerButtonClicked(GameObject button)
         {
+            TextMeshProUGUI clickedButton = button.GetComponent<TextMeshProUGUI>();
+            
+
+            if (clickedButton.color == selectedColor)
+            {
+                clickedButton.color = defaultColor;
+            }
+            else
+            {
+                clickedButton.color = selectedColor;
+            }
+
+            string buttonTag = button.tag;
+
             Debug.Log("Button Clicked");
             // Checks the button that was clicked to see if the tag matches a correct answer
+
             if (correctAnswer.Contains(buttonTag))
             {
                 // If it matches, it removes that button from our list, to prevent it being clicked

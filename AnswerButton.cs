@@ -9,7 +9,7 @@ namespace Assets.Scripts.QuizGame
 
         private AnswerData answerData;
         private GameController gmController;
-        private string buttonTag;
+        private GameObject button;
 
         // Use this for initialization
         public void Start()
@@ -28,8 +28,8 @@ namespace Assets.Scripts.QuizGame
         public void ButtonClicked()
         {
             gmController = FindObjectOfType<GameController>();
-            buttonTag = gameObject.tag;
-            gmController.AnswerButtonClicked(buttonTag);
+            // buttonTag = gameObject.tag;
+            gmController.AnswerButtonClicked(gameObject);
         }
         
     }
