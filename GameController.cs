@@ -24,13 +24,14 @@ namespace Assets.Scripts.QuizGame
         public GameObject roundEndDisplay;
 
 
-        private List<string> correctAnswer;
-        private bool isRoundActive;
-        private float timeRemaining;
+        private List<string> correctAnswers;
+        private List<string> selectedAnswers;
         private int questionIndex;
         private int playerScore;
         private Color selectedColor;
         private Color defaultColor;
+        private bool isRoundActive;
+        private float timeRemaining;
 
         void Start()
         {
@@ -43,7 +44,7 @@ namespace Assets.Scripts.QuizGame
             questionPool = ql.GetQuestions();
             // Assigns the time from the data controller.
             timeRemaining = currentRoundData.timeLimitInSeconds;
-            
+
             selectedColor = Color.green;
             defaultColor = Color.black;
 
@@ -55,7 +56,7 @@ namespace Assets.Scripts.QuizGame
             ShowQuestion();
             isRoundActive = true;
             UpDateTimeRemainingDisplay();
-
+            selectedAnswers = new List<string>();
         }
 
         /// <summary>
@@ -64,7 +65,7 @@ namespace Assets.Scripts.QuizGame
         private void ShowQuestion()
         {
             // Instantiates the list as we'll use it below.
-            correctAnswer = new List<string>();
+            correctAnswers = new List<string>();
             // Prints the current question.
             questionText.text = questionPool[questionIndex].Question;
             // We're going to mix up our answers here.  Easiest way I found to do this (and still keep
@@ -87,7 +88,7 @@ namespace Assets.Scripts.QuizGame
                 if (questionPool[questionIndex].isCorrect[i])
                 {
                     // If so, adds the button tag to our correct answer list.
-                    correctAnswer.Add(randomList[i].tag);
+                    correctAnswers.Add(randomList[i].tag);
                 }
             }
 
@@ -99,66 +100,79 @@ namespace Assets.Scripts.QuizGame
         /// <param name="buttonTag">Passes the button tag</param>
         public void AnswerButtonClicked(GameObject button)
         {
+            // Instantiates the TextMeshGUI
             TextMeshProUGUI clickedButton = button.GetComponent<TextMeshProUGUI>();
             
-
+            // Checks the button collor.  If it's default, it changes it to show selected and adds the tag to
+            // our selectedAnswer list.  If it's already selected, simply changes the color back to default and
+            // removes the answer from the selectedAnswer list.
             if (clickedButton.color == selectedColor)
             {
                 clickedButton.color = defaultColor;
+                selectedAnswers.Remove(button.tag);
             }
             else
             {
                 clickedButton.color = selectedColor;
+                selectedAnswers.Add(button.tag);
             }
+            
+        }
 
-            string buttonTag = button.tag;
-
-            Debug.Log("Button Clicked");
-            // Checks the button that was clicked to see if the tag matches a correct answer
-
-            if (correctAnswer.Contains(buttonTag))
+        /// <summary>
+        /// Checks the selected answers against the correct answers for this question.
+        /// </summary>
+        public void AnswerCheck()
+        {
+            // Right off the bat, we check to see if more answers were selected than correct answers exist.
+            // If so, we know they got this answer wrong.
+            if (selectedAnswers.Count <= correctAnswers.Count)
             {
-                // If it matches, it removes that button from our list, to prevent it being clicked
-                // again if there's more than one correct answer.
-                correctAnswer.Remove(buttonTag);
-                // Here's where we check to see if it's the only correct answer or not.  If it is, it
-                // gives the points to the player and then updates the score on screen.
-                if (correctAnswer.Count == 0)
+                // Then we do a foreach loop to go through all the selected answers, checking each one
+                // against our correctAnswer list.  We also remove each correct answer from our correctAnswers list,
+                // so we can make sure all correct answers were chosen, below.
+                foreach (var answer in selectedAnswers)
                 {
-                    playerScore += currentRoundData.pointsAddedForCorrectAnswer;
-                    scoreText.text = "Score: " + playerScore;
-                    // Checks to see if there are any more questions after this one.  If so, it increases
-                    // the question index and moves to the next question.
-                    if (questionPool.Keys.Count > questionIndex + 1)
+                    if (correctAnswers.Contains(answer))
                     {
-                        questionIndex++;
-                        ShowQuestion();
+                        correctAnswers.Remove(answer);
+                        Debug.Log("This answer is correct!");
                     }
                     else
                     {
-                        // No more questions? End of round.
-                        EndRound();
+                        Debug.Log("This answer is not correct!");
                     }
+
                 }
-                else
+                // Here we check to make sure there's no more correct answers.  If correctAnswers list is empty,
+                // we know they picked all of the correct answers for this question.  Since we checked earlier to see
+                // there were no extra answers selected, we can call this question done and award points.
+                if (correctAnswers.Count == 0)
                 {
-                    // If there's more than one correct answer, but they clicked on one of them, it gives the player 5 points for
-                    // getting a right answer (it's arbitrary, just wanted to see something happen) and then waits
-                    // for them to click another answer. This entire section is going to be rewritten to allow a submit button
-                    // to be added.  Much of the logic is going to remain the same; so figured I'd tackle it now and then figure out
-                    // answer highlighting and such later on.
-                    playerScore += 5;
+                    playerScore += currentRoundData.pointsAddedForCorrectAnswer;
                     scoreText.text = "Score: " + playerScore;
+                    Debug.Log("You got it right!");
                 }
             }
             else
             {
-                // If they clicked on a wrong button, it takes 5 points away.  Again.. totally arbitrary and will be rewritten soon.
-                playerScore -= 5;
-                scoreText.text = "Score: " + playerScore;
+                Debug.Log("You got it wrong, son!");
+            }
+
+            //Checks to see if there are any more questions after this one.If so, it increases
+            // the question index and moves to the next question.
+            if (questionPool.Keys.Count > questionIndex + 1)
+            {
+                questionIndex++;
+                ShowQuestion();
+            }
+            else
+            {
+                // No more questions? End of round.
+                EndRound();
             }
         }
-        
+
         /// <summary>
         /// Ends the round.
         /// </summary>
@@ -205,8 +219,8 @@ namespace Assets.Scripts.QuizGame
 
 
             }
-            
+
         }
-        
+
     }
 }
