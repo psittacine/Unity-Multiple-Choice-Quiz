@@ -16,7 +16,7 @@ namespace Assets.Scripts.QuizGame
         public AnswerData AnswerData;
         public Dictionary<int, AnswerData> QuestionPool;
         private string dbPath;
-        public int numberOfQuestions = 1;
+        public int numberOfQuestions = 11;
 
 
         private void Start()
@@ -40,24 +40,40 @@ namespace Assets.Scripts.QuizGame
                             cmd.CommandType = CommandType.Text;
                             cmd.CommandText = "PRAGMA foreign_keys = 1";
                             cmd.CommandType = CommandType.Text;
-                            cmd.CommandText = "SELECT question, answer, isCorrect FROM net_tbl_answers INNER JOIN net_tbl_questions ON net_tbl_answers.question_id = net_tbl_questions.id WHERE net_tbl_answers.question_id = 1;";
+                            cmd.CommandText = "SELECT net_tbl_questions.id, question, answer, isCorrect, net_tbl_answers.question_id FROM net_tbl_answers INNER JOIN net_tbl_questions ON net_tbl_answers.question_id = net_tbl_questions.id WHERE net_tbl_questions.category = 1;";
 
                             Answers = new List<string>();
                             IsCorrect = new List<bool>();
                             int count = 0;
+                            int currentId = 0;
+                            int questionId = 0;
                             Debug.Log("data (begin)");
                             var reader = cmd.ExecuteReader();
+                            questionId = Convert.ToInt32(reader["question_id"]);
                             while (reader.Read())
                             {
+                                currentId = Convert.ToInt32(reader["question_id"]);
                                 
+                                if (questionId != currentId)
+                                {
+                                    AnswerData.AnswerPool = Answers;
+                                    AnswerData.isCorrect = IsCorrect;
+                                    QuestionPool.Add(count, AnswerData);
+                                    Answers = new List<string>();
+                                    IsCorrect = new List<bool>();
+                                    AnswerData = new AnswerData();
+                                    count++;
+                                }
+
                                 AnswerData.Question = Convert.ToString(reader["question"]);
                                 Answers.Add(Convert.ToString(reader["answer"]));
-                                AnswerData.isCorrect.Add(Convert.ToBoolean(reader["isCorrect"]));
-                                
+                                IsCorrect.Add(Convert.ToBoolean(reader["isCorrect"]));
+                                questionId = currentId;
+
                             }
 
-                            AnswerData.AnswerPool = Answers;
-                            QuestionPool.Add(count, AnswerData);
+                            
+
                             Debug.Log("data (end)");
                         }
                     }

@@ -23,7 +23,6 @@ namespace Assets.Scripts.QuizGame
         public GameObject questionDisplay;
         public GameObject roundEndDisplay;
 
-
         private List<string> correctAnswers;
         private List<string> selectedAnswers;
         private int questionIndex;
@@ -43,7 +42,7 @@ namespace Assets.Scripts.QuizGame
             // Grabs the questions from the DB via the GetQuestions method.
             questionPool = ql.GetQuestions();
             // Assigns the time from the data controller.
-            timeRemaining = currentRoundData.timeLimitInSeconds;
+            // timeRemaining = currentRoundData.timeLimitInSeconds;
 
             selectedColor = Color.green;
             defaultColor = Color.black;
@@ -64,6 +63,13 @@ namespace Assets.Scripts.QuizGame
         /// </summary>
         private void ShowQuestion()
         {
+            foreach (var box in answerTexts)
+            {
+                box.text = "";
+                box.color = defaultColor;
+                box.gameObject.SetActive(false);
+            }
+            timeRemaining = currentRoundData.timeLimitInSeconds;
             // Instantiates the list as we'll use it below.
             correctAnswers = new List<string>();
             // Prints the current question.
@@ -97,13 +103,13 @@ namespace Assets.Scripts.QuizGame
         /// <summary>
         /// Checks the button clicked to see if it was a right or wrong choice.
         /// </summary>
-        /// <param name="buttonTag">Passes the button tag</param>
+        /// <param name="button">Passes the button tag</param>
         public void AnswerButtonClicked(GameObject button)
         {
             // Instantiates the TextMeshGUI
             TextMeshProUGUI clickedButton = button.GetComponent<TextMeshProUGUI>();
             
-            // Checks the button collor.  If it's default, it changes it to show selected and adds the tag to
+            // Checks the button color.  If it's default, it changes it to show selected and adds the tag to
             // our selectedAnswer list.  If it's already selected, simply changes the color back to default and
             // removes the answer from the selectedAnswer list.
             if (clickedButton.color == selectedColor)
@@ -124,6 +130,8 @@ namespace Assets.Scripts.QuizGame
         /// </summary>
         public void AnswerCheck()
         {
+            
+            
             // Right off the bat, we check to see if more answers were selected than correct answers exist.
             // If so, we know they got this answer wrong.
             if (selectedAnswers.Count <= correctAnswers.Count)
@@ -137,13 +145,18 @@ namespace Assets.Scripts.QuizGame
                     {
                         correctAnswers.Remove(answer);
                         Debug.Log("This answer is correct!");
+                        
                     }
                     else
                     {
                         Debug.Log("This answer is not correct!");
+                       
                     }
 
                 }
+
+                selectedAnswers.Clear();
+
                 // Here we check to make sure there's no more correct answers.  If correctAnswers list is empty,
                 // we know they picked all of the correct answers for this question.  Since we checked earlier to see
                 // there were no extra answers selected, we can call this question done and award points.
@@ -153,10 +166,12 @@ namespace Assets.Scripts.QuizGame
                     scoreText.text = "Score: " + playerScore;
                     Debug.Log("You got it right!");
                 }
-            }
-            else
-            {
-                Debug.Log("You got it wrong, son!");
+                else
+                {
+                    Debug.Log("You got it wrong, son!");
+                }
+
+
             }
 
             //Checks to see if there are any more questions after this one.If so, it increases
