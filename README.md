@@ -7,7 +7,7 @@ Goals are:
 * ~Multiple correct answers are allowed.~  - commit 7/14/18
 * ~Randomizing of questions for each test.~  - commit 7/14/18
 * ~Answers to be selected together and then submitted~ - commit 7/15/18
-* Question pools by category.  
+* ~Question pools by category.~ - commit 7/18/18  
 * Variable timing/difficulty.  
 * At the end, review questions answered incorrectly.  
 * Whatever else occurs to me as we go along.  
