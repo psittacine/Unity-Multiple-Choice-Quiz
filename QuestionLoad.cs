@@ -40,7 +40,7 @@ namespace Assets.Scripts.QuizGame
                             cmd.CommandType = CommandType.Text;
                             cmd.CommandText = "PRAGMA foreign_keys = 1";
                             cmd.CommandType = CommandType.Text;
-                            cmd.CommandText = "SELECT net_tbl_questions.id, question, answer, isCorrect, net_tbl_answers.question_id FROM net_tbl_answers INNER JOIN net_tbl_questions ON net_tbl_answers.question_id = net_tbl_questions.id WHERE net_tbl_questions.category = 1;";
+                            cmd.CommandText = "SELECT net_tbl_questions.id, question, answer, isCorrect, net_tbl_answers.question_id FROM net_tbl_answers INNER JOIN net_tbl_questions ON net_tbl_answers.question_id = net_tbl_questions.id WHERE net_tbl_questions.category = " + RoundData.categoryParameters + ";";
 
                             Answers = new List<string>();
                             IsCorrect = new List<bool>();

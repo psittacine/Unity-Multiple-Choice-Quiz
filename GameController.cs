@@ -13,12 +13,12 @@ namespace Assets.Scripts.QuizGame
     public class GameController : MonoBehaviour
     {
 
+        
         public TextMeshProUGUI scoreText;
         public TextMeshProUGUI[] answerTexts;
         public TextMeshProUGUI questionText;
         public TextMeshProUGUI timeDisplay;
         private GameObject dataController;
-        private RoundData currentRoundData;
         public Dictionary<int, AnswerData> questionPool;
         public GameObject questionDisplay;
         public GameObject roundEndDisplay;
@@ -34,10 +34,7 @@ namespace Assets.Scripts.QuizGame
 
         void Start()
         {
-            // Finds the data controller to pull all the current round information such as time limit, amount of score, etc.
-            DataController dataController = GameObject.FindGameObjectWithTag("DataController").GetComponent<DataController>();
-            currentRoundData = dataController.GetCurrentRoundData();
-            // Instantiates the question load script.
+            
             QuestionLoad ql = gameObject.GetComponent<QuestionLoad>();
             // Grabs the questions from the DB via the GetQuestions method.
             questionPool = ql.GetQuestions();
@@ -69,7 +66,7 @@ namespace Assets.Scripts.QuizGame
                 box.color = defaultColor;
                 box.gameObject.SetActive(false);
             }
-            timeRemaining = currentRoundData.timeLimitInSeconds;
+            timeRemaining = RoundData.timeLimitInSeconds;
             // Instantiates the list as we'll use it below.
             correctAnswers = new List<string>();
             // Prints the current question.
@@ -162,7 +159,7 @@ namespace Assets.Scripts.QuizGame
                 // there were no extra answers selected, we can call this question done and award points.
                 if (correctAnswers.Count == 0)
                 {
-                    playerScore += currentRoundData.pointsAddedForCorrectAnswer;
+                    playerScore += RoundData.pointsAddedForCorrectAnswer;
                     scoreText.text = "Score: " + playerScore;
                     Debug.Log("You got it right!");
                 }
