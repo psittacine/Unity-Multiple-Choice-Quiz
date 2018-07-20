@@ -26,6 +26,7 @@ namespace Assets.Scripts.QuizGame
         private List<string> correctAnswers;
         private List<string> selectedAnswers;
         private int questionIndex;
+        private int numberOfQuestions;
         private int playerScore;
         private Color selectedColor;
         private Color defaultColor;
@@ -38,8 +39,7 @@ namespace Assets.Scripts.QuizGame
             QuestionLoad ql = gameObject.GetComponent<QuestionLoad>();
             // Grabs the questions from the DB via the GetQuestions method.
             questionPool = ql.GetQuestions();
-            // Assigns the time from the data controller.
-            // timeRemaining = currentRoundData.timeLimitInSeconds;
+            
 
             selectedColor = Color.green;
             defaultColor = Color.black;
@@ -49,6 +49,7 @@ namespace Assets.Scripts.QuizGame
             // the timer.
             playerScore = 0;
             questionIndex = 0;
+            numberOfQuestions = questionPool.Count-1;
             ShowQuestion();
             isRoundActive = true;
             UpDateTimeRemainingDisplay();
@@ -162,6 +163,7 @@ namespace Assets.Scripts.QuizGame
                     playerScore += RoundData.pointsAddedForCorrectAnswer;
                     scoreText.text = "Score: " + playerScore;
                     Debug.Log("You got it right!");
+                    questionPool.Remove(questionIndex);
                 }
                 else
                 {
@@ -173,7 +175,7 @@ namespace Assets.Scripts.QuizGame
 
             //Checks to see if there are any more questions after this one.If so, it increases
             // the question index and moves to the next question.
-            if (questionPool.Keys.Count > questionIndex + 1)
+            if (numberOfQuestions > questionIndex)
             {
                 questionIndex++;
                 ShowQuestion();
@@ -196,6 +198,49 @@ namespace Assets.Scripts.QuizGame
             questionDisplay.SetActive(false);
             // Shows the game over screen.
             roundEndDisplay.SetActive(true);
+            GameObject ScoreText = GameObject.FindGameObjectWithTag("Score Display");
+            TextMeshProUGUI ScoreMessage = ScoreText.GetComponent<TextMeshProUGUI>();
+            ScoreMessage.text = "You scored " + playerScore / 10 + " out of " + numberOfQuestions + " correct!";
+        }
+
+
+        public void ReviewQuestions()
+        {
+            questionDisplay.SetActive(true);
+            // Shows the game over screen.
+            roundEndDisplay.SetActive(false);
+
+            questionIndex = 0;
+
+            foreach (var box in answerTexts)
+            {
+                box.text = "";
+                box.color = defaultColor;
+                box.gameObject.SetActive(false);
+            }
+            
+            // Prints the current question.
+            questionText.text = questionPool[questionIndex].Question;
+            
+
+            // Simple for loop to print all our answers, no matter how many there are.
+            for (int i = 0; i < questionPool[questionIndex].AnswerPool.Count; i++)
+            {
+                // Sets the gameobject to active so it can be printed to.  I've turned them off because if there
+                // are only two answers to be printed, we don't want the user to be able to click on invisible buttons 3 and 4.
+                answerTexts[i].gameObject.SetActive(true);
+                Button answerButton = answerTexts[i].gameObject.GetComponent<Button>();
+                answerButton.gameObject.SetActive(false);
+
+                // Prints the answer to our scrambled text box.
+                answerTexts[i].text = questionPool[questionIndex].AnswerPool[i];
+                // Checks to see if the answer currently being printed is a correct one.
+                if (questionPool[questionIndex].isCorrect[i])
+                {
+                    // If so, adds the button tag to our correct answer list.
+                    answerTexts[i].color = selectedColor;
+                }
+            }
         }
 
         /// <summary>
@@ -226,7 +271,7 @@ namespace Assets.Scripts.QuizGame
                 // Checks to see if time ran out.
                 if (timeRemaining <= 0f)
                 {
-                    EndRound();
+                    AnswerCheck();
                 }
 
 
