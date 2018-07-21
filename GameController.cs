@@ -20,8 +20,11 @@ namespace Assets.Scripts.QuizGame
         public TextMeshProUGUI timeDisplay;
         private GameObject dataController;
         public Dictionary<int, AnswerData> questionPool;
+        public Dictionary<int, AnswerData> reviewPool;
         public GameObject questionDisplay;
         public GameObject roundEndDisplay;
+        public GameObject SubmitButton;
+        public GameObject ReviewButton;
 
         private List<string> correctAnswers;
         private List<string> selectedAnswers;
@@ -36,6 +39,8 @@ namespace Assets.Scripts.QuizGame
         void Start()
         {
             
+            SubmitButton.SetActive(true);
+            ReviewButton.SetActive(false);
             QuestionLoad ql = gameObject.GetComponent<QuestionLoad>();
             // Grabs the questions from the DB via the GetQuestions method.
             questionPool = ql.GetQuestions();
@@ -54,6 +59,7 @@ namespace Assets.Scripts.QuizGame
             isRoundActive = true;
             UpDateTimeRemainingDisplay();
             selectedAnswers = new List<string>();
+            reviewPool = new Dictionary<int, AnswerData>();
         }
 
         /// <summary>
@@ -61,6 +67,9 @@ namespace Assets.Scripts.QuizGame
         /// </summary>
         private void ShowQuestion()
         {
+
+            
+
             foreach (var box in answerTexts)
             {
                 box.text = "";
@@ -163,11 +172,12 @@ namespace Assets.Scripts.QuizGame
                     playerScore += RoundData.pointsAddedForCorrectAnswer;
                     scoreText.text = "Score: " + playerScore;
                     Debug.Log("You got it right!");
-                    questionPool.Remove(questionIndex);
+                    
                 }
                 else
                 {
                     Debug.Log("You got it wrong, son!");
+                    reviewPool.Add(reviewPool.Count,questionPool[questionIndex]);
                 }
 
 
@@ -203,15 +213,20 @@ namespace Assets.Scripts.QuizGame
             ScoreMessage.text = "You scored " + playerScore / 10 + " out of " + numberOfQuestions + " correct!";
         }
 
+        public void ReviewStart()
+        {
+            questionDisplay.SetActive(true);
+            SubmitButton.SetActive(false);
+            ReviewButton.SetActive(true);
+            roundEndDisplay.SetActive(false);
+            questionIndex = 0;
+            ReviewQuestions();
+
+        }
 
         public void ReviewQuestions()
         {
-            questionDisplay.SetActive(true);
-            // Shows the game over screen.
-            roundEndDisplay.SetActive(false);
-
-            questionIndex = 0;
-
+            
             foreach (var box in answerTexts)
             {
                 box.text = "";
@@ -220,26 +235,45 @@ namespace Assets.Scripts.QuizGame
             }
             
             // Prints the current question.
-            questionText.text = questionPool[questionIndex].Question;
+            questionText.text = reviewPool[questionIndex].Question;
             
 
             // Simple for loop to print all our answers, no matter how many there are.
-            for (int i = 0; i < questionPool[questionIndex].AnswerPool.Count; i++)
+            for (int i = 0; i < reviewPool[questionIndex].AnswerPool.Count; i++)
             {
                 // Sets the gameobject to active so it can be printed to.  I've turned them off because if there
                 // are only two answers to be printed, we don't want the user to be able to click on invisible buttons 3 and 4.
+                
                 answerTexts[i].gameObject.SetActive(true);
                 Button answerButton = answerTexts[i].gameObject.GetComponent<Button>();
-                answerButton.gameObject.SetActive(false);
+                answerButton.interactable = false;
 
+                
                 // Prints the answer to our scrambled text box.
-                answerTexts[i].text = questionPool[questionIndex].AnswerPool[i];
+                answerTexts[i].text = reviewPool[questionIndex].AnswerPool[i];
                 // Checks to see if the answer currently being printed is a correct one.
-                if (questionPool[questionIndex].isCorrect[i])
+                if (reviewPool[questionIndex].isCorrect[i])
                 {
                     // If so, adds the button tag to our correct answer list.
                     answerTexts[i].color = selectedColor;
+                    
                 }
+            }
+        }
+
+        public void NextReviewQuestion()
+        {
+            if (numberOfQuestions > questionIndex)
+            {
+                questionIndex++;
+                ReviewQuestions();
+            }
+            else
+            {
+                // Swaps the flag to false
+                isRoundActive = false;
+                
+                ReturnToMenu();
             }
         }
 
