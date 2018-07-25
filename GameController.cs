@@ -68,14 +68,9 @@ namespace Assets.Scripts.QuizGame
         private void ShowQuestion()
         {
 
-            
 
-            foreach (var box in answerTexts)
-            {
-                box.text = "";
-                box.color = defaultColor;
-                box.gameObject.SetActive(false);
-            }
+            ResetAnswerBoxes();
+            
             timeRemaining = RoundData.timeLimitInSeconds;
             // Instantiates the list as we'll use it below.
             correctAnswers = new List<string>();
@@ -107,6 +102,10 @@ namespace Assets.Scripts.QuizGame
 
         }
 
+
+  
+
+
         /// <summary>
         /// Checks the button clicked to see if it was a right or wrong choice.
         /// </summary>
@@ -135,7 +134,7 @@ namespace Assets.Scripts.QuizGame
         /// <summary>
         /// Checks the selected answers against the correct answers for this question.
         /// </summary>
-        public void AnswerCheck()
+        public void CheckForCorrectAnswers()
         {
             
             
@@ -210,7 +209,7 @@ namespace Assets.Scripts.QuizGame
             roundEndDisplay.SetActive(true);
             GameObject ScoreText = GameObject.FindGameObjectWithTag("Score Display");
             TextMeshProUGUI ScoreMessage = ScoreText.GetComponent<TextMeshProUGUI>();
-            ScoreMessage.text = "You scored " + playerScore / 10 + " out of " + numberOfQuestions + " correct!";
+            ScoreMessage.text = "You scored " + playerScore / 10 + " out of " + (numberOfQuestions + 1) + " correct!";
         }
 
         public void ReviewStart()
@@ -220,6 +219,7 @@ namespace Assets.Scripts.QuizGame
             ReviewButton.SetActive(true);
             roundEndDisplay.SetActive(false);
             questionIndex = 0;
+            numberOfQuestions = reviewPool.Count - 1;
             ReviewQuestions();
 
         }
@@ -227,12 +227,7 @@ namespace Assets.Scripts.QuizGame
         public void ReviewQuestions()
         {
             
-            foreach (var box in answerTexts)
-            {
-                box.text = "";
-                box.color = defaultColor;
-                box.gameObject.SetActive(false);
-            }
+            ResetAnswerBoxes();
             
             // Prints the current question.
             questionText.text = reviewPool[questionIndex].Question;
@@ -293,21 +288,39 @@ namespace Assets.Scripts.QuizGame
             timeDisplay.text = "Time: " + Mathf.Round(timeRemaining);
         }
 
+
+        /// <summary>
+        /// Resets the answer boxes for the next question.
+        /// </summary>
+        public void ResetAnswerBoxes()
+        {
+            foreach (var box in answerTexts)
+            {
+                box.text = "";
+                box.color = defaultColor;
+                box.gameObject.SetActive(false);
+            }
+        }
+
         // Update is called once per frame
         void Update()
         {
             // Checks the flag to see if a round is currently underway.
             if (isRoundActive)
             {
-                // Counts down the time from the time remaining variable.
-                timeRemaining -= Time.deltaTime;
-                UpDateTimeRemainingDisplay();
-                // Checks to see if time ran out.
-                if (timeRemaining <= 0f)
+                if (RoundData.timeLimitInSeconds != 0)
                 {
-                    AnswerCheck();
-                }
+                    // Counts down the time from the time remaining variable.
+                    timeRemaining -= Time.deltaTime;
+                UpDateTimeRemainingDisplay();
 
+                
+                    // Checks to see if time ran out.
+                    if (timeRemaining <= 0f)
+                    {
+                        CheckForCorrectAnswers();
+                    }
+                }
 
             }
 

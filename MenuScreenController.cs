@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework.Constraints;
 using ProBuilder2.Common;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -15,6 +16,9 @@ namespace Assets.Scripts.QuizGame
     {
 
         public GameObject FadeFromBlack;
+        public Slider TimerSlider;
+        public TextMeshProUGUI TimerSeconds;
+        public UnityEngine.UI.Button SubmitButton;
         private List<string> categories;
         private Color selectedColor = Color.green;
         private Color defaultColor = Color.white;
@@ -50,6 +54,11 @@ namespace Assets.Scripts.QuizGame
             }
         }
 
+        public void SetTimer()
+        {
+            TimerSeconds.text = TimerSlider.value.ToString();
+            RoundData.timeLimitInSeconds = (int)TimerSlider.value;
+        }
        
         /// <summary>
         /// Starts the actual quiz game after the categories have been selected and the Start Game button has been pushed.
@@ -77,6 +86,18 @@ namespace Assets.Scripts.QuizGame
             // Fading to black
             FadeFromBlack.SetActive(false);
             
+        }
+
+        public void Update()
+        {
+            if (categories.Count == 0)
+            {
+                SubmitButton.enabled = false;
+            }
+            else
+            {
+                SubmitButton.enabled = true;
+            }
         }
     }
 }
