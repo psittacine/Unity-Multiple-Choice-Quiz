@@ -18,9 +18,11 @@ namespace Assets.Scripts.QuizGame
         public TextMeshProUGUI[] answerTexts;
         public TextMeshProUGUI questionText;
         public TextMeshProUGUI timeDisplay;
+        public TextMeshProUGUI questionCounter;
         private GameObject dataController;
         public Dictionary<int, AnswerData> questionPool;
         public Dictionary<int, AnswerData> reviewPool;
+        public Dictionary<int, AnswerData> randomPool;
         public GameObject questionDisplay;
         public GameObject roundEndDisplay;
         public GameObject SubmitButton;
@@ -35,6 +37,7 @@ namespace Assets.Scripts.QuizGame
         private Color defaultColor;
         private bool isRoundActive;
         private float timeRemaining;
+        private bool randomFlag;
 
         void Start()
         {
@@ -60,6 +63,25 @@ namespace Assets.Scripts.QuizGame
             UpDateTimeRemainingDisplay();
             selectedAnswers = new List<string>();
             reviewPool = new Dictionary<int, AnswerData>();
+            randomPool = new Dictionary<int, AnswerData>();
+            randomFlag = true;
+
+            if (randomFlag)
+            {
+                List<int> newIndex = new List<int>();
+                for (int i = 0; i < questionPool.Count; i++)
+                {
+                    newIndex.Add(i);
+                }
+                var rand = new System.Random();
+                newIndex = newIndex.OrderBy(x => rand.Next()).ToList();
+                for (int i = 0; i < questionPool.Count; i++)
+                {
+                    randomPool[newIndex[i]] = questionPool[i];
+                }
+                
+                questionPool = randomPool;
+            }
         }
 
         /// <summary>
@@ -67,7 +89,7 @@ namespace Assets.Scripts.QuizGame
         /// </summary>
         private void ShowQuestion()
         {
-
+            questionCounter.text = "Question: " + (questionIndex + 1) + " of " + questionPool.Count;
 
             ResetAnswerBoxes();
             
@@ -101,11 +123,7 @@ namespace Assets.Scripts.QuizGame
             }
 
         }
-
-
-  
-
-
+        
         /// <summary>
         /// Checks the button clicked to see if it was a right or wrong choice.
         /// </summary>
@@ -163,7 +181,7 @@ namespace Assets.Scripts.QuizGame
 
                 selectedAnswers.Clear();
 
-                // Here we check to make sure there's no more correct answers.  If correctAnswers list is empty,
+                // Here we check to make sure there are no more correct answers.  If correctAnswers list is empty,
                 // we know they picked all of the correct answers for this question.  Since we checked earlier to see
                 // there were no extra answers selected, we can call this question done and award points.
                 if (correctAnswers.Count == 0)
@@ -226,7 +244,9 @@ namespace Assets.Scripts.QuizGame
 
         public void ReviewQuestions()
         {
-            
+
+            questionCounter.text = "Question: " + (questionIndex + 1) + " of " + reviewPool.Count;
+
             ResetAnswerBoxes();
             
             // Prints the current question.

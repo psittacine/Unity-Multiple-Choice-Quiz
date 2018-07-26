@@ -18,17 +18,25 @@ namespace Assets.Scripts.QuizGame
         public GameObject FadeFromBlack;
         public Slider TimerSlider;
         public TextMeshProUGUI TimerSeconds;
+        public TextMeshProUGUI QuestionCount;
         public UnityEngine.UI.Button SubmitButton;
-        private List<string> categories;
-        private Color selectedColor = Color.green;
-        private Color defaultColor = Color.white;
+        private List<int> _numberOfQuestions;
+        private int _currentCount;
+        private List<string> _categories;
+        private Color _selectedColor = Color.green;
+        private Color _defaultColor = Color.white;
         
         
 
         public void Start()
         {
-            // Instantiating our list
-            categories = new List<string>();
+            // Instantiating our lists
+            _categories = new List<string>();
+            _numberOfQuestions = new List<int>();
+            MenuScreenDAL msd = gameObject.GetComponent<MenuScreenDAL>();
+            _numberOfQuestions = msd.GetNumberOfQuestions();
+
+
         }
 
         /// <summary>
@@ -42,15 +50,19 @@ namespace Assets.Scripts.QuizGame
              
             // Same deal as in our GameController script.  Just checks the color to see if it's selected or default
             // and then adds/removes from our list based on what needs to happen.  
-            if (clickedButton.color == selectedColor)
+            if (clickedButton.color == _selectedColor)
             {
-                clickedButton.color = defaultColor;
-                categories.Remove(button.name);
+                clickedButton.color = _defaultColor;
+                _categories.Remove(button.name);
+                _currentCount -= _numberOfQuestions[(Int32.Parse(button.name)) - 1];
+                QuestionCount.text = _currentCount.ToString();
             }
             else
             {
-                clickedButton.color = selectedColor;
-                categories.Add(button.name);
+                clickedButton.color = _selectedColor;
+                _categories.Add(button.name);
+                _currentCount += _numberOfQuestions[(Int32.Parse(button.name)) - 1];
+                QuestionCount.text = _currentCount.ToString();
             }
         }
 
@@ -70,7 +82,7 @@ namespace Assets.Scripts.QuizGame
 
             // Runs through each of the indexes in our category list, adds them to the stringbuilder, and puts a comma
             // after it for the SQLLite query.
-            foreach (var category in categories)
+            foreach (var category in _categories)
             {
                 queryParameters.Append(category);
                 queryParameters.Append(",");
@@ -90,7 +102,7 @@ namespace Assets.Scripts.QuizGame
 
         public void Update()
         {
-            if (categories.Count == 0)
+            if (_categories.Count == 0)
             {
                 SubmitButton.enabled = false;
             }
@@ -98,6 +110,7 @@ namespace Assets.Scripts.QuizGame
             {
                 SubmitButton.enabled = true;
             }
+
         }
     }
 }
