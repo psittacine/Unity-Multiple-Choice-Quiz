@@ -25,6 +25,8 @@ namespace Assets.Scripts.QuizGame
         private List<string> _categories;
         private Color _selectedColor = Color.green;
         private Color _defaultColor = Color.white;
+        [SerializeField] private Toggle RandomizeToggle;
+        [SerializeField]private GameObject SettingsMenu;
         
         
 
@@ -35,7 +37,10 @@ namespace Assets.Scripts.QuizGame
             _numberOfQuestions = new List<int>();
             MenuScreenDAL msd = gameObject.GetComponent<MenuScreenDAL>();
             _numberOfQuestions = msd.GetNumberOfQuestions();
-
+            RoundData.timeLimitInSeconds = 30;
+            RoundData.randomQuestions = true;
+            // Fading to black
+            FadeFromBlack.SetActive(false);
 
         }
 
@@ -95,8 +100,7 @@ namespace Assets.Scripts.QuizGame
             RoundData.categoryParameters = queryParameters.ToString();
             // Speaking of which.. Loading that new scene.
             SceneManager.LoadScene("QuestionGame");
-            // Fading to black
-            FadeFromBlack.SetActive(false);
+            
             
         }
 
@@ -111,6 +115,16 @@ namespace Assets.Scripts.QuizGame
                 SubmitButton.enabled = true;
             }
 
+        }
+
+        public void MenuToggle()
+        {
+            SettingsMenu.SetActive(!SettingsMenu.activeSelf);
+        }
+
+        public void RandomToggle()
+        {
+            RoundData.randomQuestions = !RoundData.randomQuestions;
         }
     }
 }

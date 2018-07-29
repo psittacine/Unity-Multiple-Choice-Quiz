@@ -28,6 +28,7 @@ namespace Assets.Scripts.QuizGame
         public GameObject SubmitButton;
         public GameObject ReviewButton;
 
+        [SerializeField] private GameObject EscapeMenu;
         private List<string> correctAnswers;
         private List<string> selectedAnswers;
         private int questionIndex;
@@ -37,7 +38,8 @@ namespace Assets.Scripts.QuizGame
         private Color defaultColor;
         private bool isRoundActive;
         private float timeRemaining;
-        private bool randomFlag;
+        private bool pauseTime = false;
+
 
         void Start()
         {
@@ -58,15 +60,15 @@ namespace Assets.Scripts.QuizGame
             playerScore = 0;
             questionIndex = 0;
             numberOfQuestions = questionPool.Count-1;
-            ShowQuestion();
+            
             isRoundActive = true;
             UpDateTimeRemainingDisplay();
             selectedAnswers = new List<string>();
             reviewPool = new Dictionary<int, AnswerData>();
             randomPool = new Dictionary<int, AnswerData>();
-            randomFlag = true;
+            
 
-            if (randomFlag)
+            if (RoundData.randomQuestions)
             {
                 List<int> newIndex = new List<int>();
                 for (int i = 0; i < questionPool.Count; i++)
@@ -82,6 +84,9 @@ namespace Assets.Scripts.QuizGame
                 
                 questionPool = randomPool;
             }
+
+            ShowQuestion();
+
         }
 
         /// <summary>
@@ -219,6 +224,8 @@ namespace Assets.Scripts.QuizGame
         /// </summary>
         public void EndRound()
         {
+            if (EscapeMenu.activeSelf)
+            { EscapeMenu.SetActive(false);}
             // Swaps the flag to false
             isRoundActive = false;
             // Turns off the quiz screen
@@ -326,7 +333,7 @@ namespace Assets.Scripts.QuizGame
         void Update()
         {
             // Checks the flag to see if a round is currently underway.
-            if (isRoundActive)
+            if ((isRoundActive) && (!pauseTime))
             {
                 if (RoundData.timeLimitInSeconds != 0)
                 {
@@ -344,6 +351,25 @@ namespace Assets.Scripts.QuizGame
 
             }
 
+            MenuToggle();
+
+        }
+
+
+        public void MenuToggle()
+        {
+            if (Input.GetKeyDown("escape") && EscapeMenu.activeSelf == false)
+            {
+                pauseTime = true;
+                EscapeMenu.SetActive(true);
+                questionDisplay.SetActive(false);
+            }
+            else if (Input.GetKeyDown("escape") && EscapeMenu.activeSelf == true)
+            {
+                pauseTime = false;
+                EscapeMenu.SetActive(false);
+                questionDisplay.SetActive(true);
+            }
         }
 
     }
