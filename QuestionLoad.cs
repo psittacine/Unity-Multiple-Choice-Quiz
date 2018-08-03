@@ -28,7 +28,7 @@ namespace Assets.Scripts.QuizGame
         public Dictionary<int, AnswerData> GetQuestions()
         {
             QuestionPool = new Dictionary<int, AnswerData>();
-            dbPath = "URI=file:" + Application.dataPath + "/SQLLite/TEQuizDB.db";
+            dbPath = "URI=file:" + Application.dataPath + "/StreamingAssets/TEQuizDB.db";
             using (SqliteConnection conn = new SqliteConnection(dbPath))
             {
                 try

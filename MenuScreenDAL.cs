@@ -16,7 +16,7 @@ namespace Assets.Scripts.QuizGame
         public List<int> GetNumberOfQuestions()
         {
             NumberOfQuestions = new List<int>();
-            dbPath = "URI=file:" + Application.dataPath + "/SQLLite/TEQuizDB.db";
+            dbPath = "URI=file:" + Application.dataPath + "/StreamingAssets/TEQuizDB.db";
             using (SqliteConnection conn = new SqliteConnection(dbPath))
             {
                 try
