@@ -12,8 +12,8 @@ namespace Assets.Scripts.QuizGame
 {
     public class MenuScreenController : MonoBehaviour
     {
-        [SerializeField] private GameObject FadeFromBlack;
-        [SerializeField] private Slider TimerSlider;
+        [SerializeField] private GameObject FadeFromBlack; 
+        [SerializeField] private Slider TimerSlider; 
         [SerializeField] private TextMeshProUGUI TimerSeconds;
         [SerializeField] private TextMeshProUGUI QuestionCount;
         [SerializeField] private UnityEngine.UI.Button SubmitButton;

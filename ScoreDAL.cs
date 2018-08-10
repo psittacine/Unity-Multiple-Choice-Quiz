@@ -10,7 +10,7 @@ namespace Assets.Scripts.QuizGame
     public class ScoreDAL : MonoBehaviour {
 
 
-        private string _dbPath;
+        private string _dbPath; 
 
         public void InsertScore(string highScoreName, int score)
         {

@@ -7,7 +7,7 @@ namespace Assets.Scripts.QuizGame
     public class AnswerButton : MonoBehaviour
     {
 
-        private AnswerData answerData;
+        private AnswerData answerData; 
         private GameController gmController;
         private GameObject button;
         

@@ -39,7 +39,7 @@ namespace Assets.Scripts.QuizGame
                         while (reader.Read())
                         {
                             _numberOfQuestions.Add(Convert.ToInt32(reader["count(question)"]));
-                        }
+                        } 
                     }
 
                 }

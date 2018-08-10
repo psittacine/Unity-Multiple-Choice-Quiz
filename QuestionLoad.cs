@@ -10,7 +10,7 @@ namespace Assets.Scripts.QuizGame
 {
     public class QuestionLoad : MonoBehaviour
     {
-        public AnswerData AnswerData;
+        public AnswerData AnswerData; 
         public Dictionary<int, AnswerData> QuestionPool;
 
         private List<string> _answers;

@@ -6,7 +6,7 @@ namespace Assets.Scripts.QuizGame
     public class DataController : MonoBehaviour
     {
  
-        void Start () {
+        void Start () { 
 		    // Keeps it ready once the current game ends.
             DontDestroyOnLoad(gameObject);
             // Brings up the menu screen.  For those thinking this is a bit redundant, you're right.

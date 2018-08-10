@@ -7,7 +7,7 @@ namespace Assets.Scripts.QuizGame
     [System.Serializable]
     public class AnswerData
     {
-        public string Question;
+        public string Question; 
         public List<string> AnswerPool;
         public List<bool> IsCorrect;
     }
