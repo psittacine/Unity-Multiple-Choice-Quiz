@@ -209,8 +209,13 @@ namespace Assets.Scripts.QuizGame
                     _reviewPool.Add(_reviewPool.Count,_questionPool[_questionIndex]);
                 }
             }
+            else
+            {
+                // Add it to the review pool.
+                _reviewPool.Add(_reviewPool.Count, _questionPool[_questionIndex]);
+            }
 
-            // We clear the selected answers for the next question. 
+            // Now we clear the selected answers for the next question. 
             _selectedAnswers.Clear();
 
             //Checks to see if there are any more questions after this one.If so, it increases
@@ -226,6 +231,7 @@ namespace Assets.Scripts.QuizGame
                 EndRound();
             }
         }
+        
 
         /// <summary>
         /// Ends the round.

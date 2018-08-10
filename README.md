@@ -9,7 +9,7 @@ Expansion goals are:
 * ~Answers to be selected together and then submitted~ - commit 7/15/18
 * ~Question pools by category.~ - commit 7/18/18  
 * ~Variable timing/difficulty.~ - commit 7/24/18
-*  At the end, review questions answered incorrectly. - Back on the menu, boys! Found a bug, hunting aggressively. 
+* ~At the end, review questions answered incorrectly.~ - Bug squashed 8/10/18. 
 * ~List question count during quiz.~ - commit 7/25/18
 * ~List number of questions at menu screen based on categories chosen.~ - commit 7/25/18
 * ~Settings menu at MenuScreen.~ - commit 7/28/18
