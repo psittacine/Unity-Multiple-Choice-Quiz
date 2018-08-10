@@ -15,6 +15,6 @@ Expansion goals are:
 * ~Settings menu at MenuScreen.~ - commit 7/28/18
 * ~In-game menu to end round and exit game.~ -commit 7/28/18 
 * Scoreboard integration with website.
-* Whatever else occurs to me as we go along.  
+* Whatever else occurs to me as we go along.   
 
 As with my other projects, the code will be messy, painful to look at, and heavily commented.  I'm learning as I go here; so prepare yourself. :P
