@@ -10,25 +10,14 @@ namespace Assets.Scripts.QuizGame
         private AnswerData answerData;
         private GameController gmController;
         private GameObject button;
-
-        // Use this for initialization
-        public void Start()
-        {
-
-            
-            
-
-        }
-
-        // Update is called once per frame
-        void Update () {
-		
-        }
-
+        
+        /// <summary>
+        /// Just a simple buttonclick method.  I could probably combine this, but Unity seems to choke
+        /// everytime I try to bring it over to the GameController class.  Still researching why.
+        /// </summary>
         public void ButtonClicked()
         {
             gmController = FindObjectOfType<GameController>();
-            // buttonTag = gameObject.tag;
             gmController.AnswerButtonClicked(gameObject);
         }
         

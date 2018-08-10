@@ -9,6 +9,6 @@ namespace Assets.Scripts.QuizGame
     {
         public string Question;
         public List<string> AnswerPool;
-        public List<bool> isCorrect;
+        public List<bool> IsCorrect;
     }
 }

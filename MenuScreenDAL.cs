@@ -10,28 +10,35 @@ namespace Assets.Scripts.QuizGame
 
     public class MenuScreenDAL : MonoBehaviour
     {
-        public List<int> NumberOfQuestions;
-        private string dbPath;
 
+        // This is the List that allows us to show the number of questions for each category as the user
+        // selects them on the Menu Screen.
+        private List<int> _numberOfQuestions;
+        private string _dbPath;
+
+        /// <summary>
+        /// Gets the number of questions for each category from the database.
+        /// </summary>
+        /// <returns>A List of ints that correspond to each category's total questions.</returns>
         public List<int> GetNumberOfQuestions()
         {
-            NumberOfQuestions = new List<int>();
-            dbPath = "URI=file:" + Application.dataPath + "/StreamingAssets/TEQuizDB.db";
-            using (SqliteConnection conn = new SqliteConnection(dbPath))
+            _numberOfQuestions = new List<int>();
+            _dbPath = "URI=file:" + Application.dataPath + "/StreamingAssets/TEQuizDB.db";
+            using (SqliteConnection conn = new SqliteConnection(_dbPath))
             {
                 try
                 {
                     conn.Open();
-
+                    
                     using (var cmd = conn.CreateCommand())
                     {
 
-                       cmd.CommandText =
-                            "SELECT count(question) FROM net_tbl_questions GROUP BY net_tbl_questions.category;";
+                        cmd.CommandText =
+                             "SELECT count(question) FROM net_tbl_questions GROUP BY net_tbl_questions.category;";
                         var reader = cmd.ExecuteReader();
                         while (reader.Read())
                         {
-                            NumberOfQuestions.Add(Convert.ToInt32(reader["count(question)"]));
+                            _numberOfQuestions.Add(Convert.ToInt32(reader["count(question)"]));
                         }
                     }
 
@@ -41,12 +48,8 @@ namespace Assets.Scripts.QuizGame
                     Console.WriteLine(ex.Message);
                     throw;
                 }
-
             }
-
-            return NumberOfQuestions;
+            return _numberOfQuestions;
         }
-
-
     }
 }

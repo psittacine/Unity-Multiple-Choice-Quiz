@@ -12,22 +12,20 @@ namespace Assets.Scripts.QuizGame
 {
     public class MenuScreenController : MonoBehaviour
     {
+        [SerializeField] private GameObject FadeFromBlack;
+        [SerializeField] private Slider TimerSlider;
+        [SerializeField] private TextMeshProUGUI TimerSeconds;
+        [SerializeField] private TextMeshProUGUI QuestionCount;
+        [SerializeField] private UnityEngine.UI.Button SubmitButton;
+        [SerializeField] private Toggle RandomizeToggle;
+        [SerializeField] private GameObject SettingsMenu;
 
-        public GameObject FadeFromBlack;
-        public Slider TimerSlider;
-        public TextMeshProUGUI TimerSeconds;
-        public TextMeshProUGUI QuestionCount;
-        public UnityEngine.UI.Button SubmitButton;
         private List<int> _numberOfQuestions;
         private int _currentCount;
         private List<string> _categories;
         private Color _selectedColor = Color.green;
         private Color _defaultColor = Color.white;
-        [SerializeField] private Toggle RandomizeToggle;
-        [SerializeField]private GameObject SettingsMenu;
         
-        
-
         public void Start()
         {
             // Instantiating our lists
@@ -35,11 +33,10 @@ namespace Assets.Scripts.QuizGame
             _numberOfQuestions = new List<int>();
             MenuScreenDAL msd = gameObject.GetComponent<MenuScreenDAL>();
             _numberOfQuestions = msd.GetNumberOfQuestions();
-            RoundData.timeLimitInSeconds = 30;
-            RoundData.randomQuestions = true;
-            // Fading to black
+            RoundData.TimeLimitInSeconds = 30;
+            RoundData.RandomQuestions = true;
+            // Fading from black
             FadeFromBlack.SetActive(false);
-
         }
 
         /// <summary>
@@ -69,10 +66,13 @@ namespace Assets.Scripts.QuizGame
             }
         }
 
+        /// <summary>
+        /// Sets the timer for each question.
+        /// </summary>
         public void SetTimer()
         {
             TimerSeconds.text = TimerSlider.value.ToString();
-            RoundData.timeLimitInSeconds = (int)TimerSlider.value;
+            RoundData.TimeLimitInSeconds = (int)TimerSlider.value;
         }
        
         /// <summary>
@@ -95,34 +95,34 @@ namespace Assets.Scripts.QuizGame
             queryParameters.Remove(queryParameters.Length-1, 1);
             
             // Assigns the value to the variable in the RoundData class so we can use it in our next scene.
-            RoundData.categoryParameters = queryParameters.ToString();
+            RoundData.CategoryParameters = queryParameters.ToString();
             // Speaking of which.. Loading that new scene.
             SceneManager.LoadScene("QuestionGame");
-            
-            
         }
 
+        /// <summary>
+        /// Unity-specific method, checks it each frame.  Right now we're using it to check the status of the 
+        /// start quiz button. If no categories have been selected, it prevents the button from being used.
+        /// </summary>
         public void Update()
         {
-            if (_categories.Count == 0)
-            {
-                SubmitButton.enabled = false;
-            }
-            else
-            {
-                SubmitButton.enabled = true;
-            }
-
+            SubmitButton.enabled = _categories.Count != 0;
         }
 
+        /// <summary>
+        /// Turns the settings menu on and off.
+        /// </summary>
         public void MenuToggle()
         {
             SettingsMenu.SetActive(!SettingsMenu.activeSelf);
         }
 
+        /// <summary>
+        /// Turns the randomizing of the quiz questions on and off.
+        /// </summary>
         public void RandomToggle()
         {
-            RoundData.randomQuestions = !RoundData.randomQuestions;
+            RoundData.RandomQuestions = !RoundData.RandomQuestions;
         }
     }
 }
