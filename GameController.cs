@@ -54,7 +54,7 @@ namespace Assets.Scripts.QuizGame
             
             // Sets our colors.  Unity freaks out if this isn't done at Start.  No idea why.
             _selectedColor = Color.green;
-            _defaultColor = Color.black;
+            _defaultColor = Color.white;
 
             // Here's where things start happening.  Resets the variables and calls the method to 
             // start showing questions.  Also flips the flag to make the round active and starts
@@ -167,6 +167,7 @@ namespace Assets.Scripts.QuizGame
         /// </summary>
         public void CheckForCorrectAnswers()
         {
+            bool reviewed = false;
             // Right off the bat, we check to see if more answers were selected than correct answers exist.
             // If so, we know they got this answer wrong.
             if (_selectedAnswers.Count <= _correctAnswers.Count)
@@ -188,6 +189,8 @@ namespace Assets.Scripts.QuizGame
                         Debug.Log("This answer is not correct!");
                         // We add the question to our review pool for later... uh... review
                         _reviewPool.Add(_reviewPool.Count, _questionPool[_questionIndex]);
+                        // Flip our reviewed flag to true so we won't get a double entry on our reviewpool.
+                        reviewed = true;
                     } 
 
                 }
@@ -203,7 +206,7 @@ namespace Assets.Scripts.QuizGame
                     Debug.Log("You got it right!");
                     
                 }
-                else
+                else if (!reviewed)
                 {
                     Debug.Log("You got it wrong, son!");
                     _reviewPool.Add(_reviewPool.Count,_questionPool[_questionIndex]);
@@ -239,7 +242,13 @@ namespace Assets.Scripts.QuizGame
         public void EndRound()
         {
             if (_escapeMenu.activeSelf)
-            { _escapeMenu.SetActive(false);}
+            {
+                _escapeMenu.SetActive(false);
+                for (int i = _questionIndex; i < _questionPool.Count; i++)
+                {
+                    _reviewPool.Add(_reviewPool.Count, _questionPool[i]); ;
+                }
+            }
             // Swaps the flag to false
             _isRoundActive = false;
             // Turns off the quiz screen
